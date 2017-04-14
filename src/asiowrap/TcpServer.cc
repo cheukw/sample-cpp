@@ -34,8 +34,11 @@ bool TCPServer::Init()
 
 bool TCPServer::Start()
 {
+	if(!tpool_->Start(true)){
+		return false;
+	}
 	AsyncAccept();
-	return tpool_->Start(true);
+	return true;
 }
 
 void TCPServer::Stop()
@@ -133,3 +136,5 @@ void TCPServer::HandleNewConn(tcp::socket&& socket, EventLoop* loop)
 	loop->RunInLoop(std::bind(&TCPConn::OnAttachedToLoop, conn));
 	conns_[cn] = conn;
 }
+
+
