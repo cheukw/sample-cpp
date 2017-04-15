@@ -5,15 +5,15 @@
 
 void OnConnection(const TCPConnPtr& conn) {
 	if (conn->IsConnected()) {
-		std::cout << conn->GetName() <<" connection accepted.\n";
+		std::cout << "thread_id:" << std::this_thread::get_id() << " " << conn->GetName() <<" connection accepted.\n";
 	}
 	else if (conn->IsDisconnecting()) {
-		std::cout << conn->GetName() <<" connection disconnecting.\n";
+		std::cout << "thread_id:" << std::this_thread::get_id() << " " <<conn->GetName() <<" connection disconnecting.\n";
 	}
 }
 
 void OnMessage(const TCPConnPtr& conn, ByteBuffer& buffer) {
-	std::cout << "recv msg " << std::string(buffer.Data(), buffer.Size()) << std::endl;
+	std::cout << "thread_id:" << std::this_thread::get_id() << " recv msg " << std::string(buffer.Data(), buffer.Size()) << std::endl;
 	conn->Send(buffer.ReadBegin(), buffer.Size());
 	buffer.ReadBytes(buffer.Size());
 	conn->Close();
@@ -22,7 +22,7 @@ void OnMessage(const TCPConnPtr& conn, ByteBuffer& buffer) {
 int main()
 {
 	EventLoop loop;
-	TCPServer s(&loop, "0.0.0.0", 7788, "EchoServer", 0);
+	TCPServer s(&loop, "0.0.0.0", 7788, "EchoServer", 4);
 	s.SetConnectionCallback(OnConnection);
 	s.SetMessageCallback(OnMessage);
 	s.Init();
